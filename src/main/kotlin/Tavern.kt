@@ -22,22 +22,22 @@ private val menuItemsWithPrice = List(menuData.size) { index ->
     listOf(name, price)
 }
 
-
 fun visitTavern() {
     narrate("$heroName enters $TAVERN_NAME")
 
     print_menu()
+    println()
 
-//    val patrons: MutableSet<String> = mutableSetOf()
-//    repeat(10) {
-//        patrons += "${firstNames.random()} ${lastNames.random()}"
-//    }
+    val patrons: MutableSet<String> = mutableSetOf()
+    repeat(10) {
+        patrons += "${firstNames.random()} ${lastNames.random()}"
+    }
 
-//    narrate("$heroName sees several patrons in the tavern:")
-//    narrate(patrons.joinToString())
-//    repeat(3) {
-//        placeOrder(patrons.random(), menuItems.random())
-//    }
+    narrate("$heroName sees several patrons in the tavern:")
+    narrate(patrons.joinToString())
+    repeat(3) {
+        placeOrder(patrons.random(), menuItems.random())
+    }
 
 }
 
@@ -54,9 +54,6 @@ private fun print_menu() {
 
     print_title(maxLineLength - TAVERN_NAME.length)
     menuItemsWithPrice.forEach {
-//        if (it[0] == "Bite of Lembas Bread") {
-//            println("dots = $maxLineLength - ${itemLength(it)}" )
-//        }
         println("${it[0]}${".".repeat(maxLineLength - itemLength(it))}${it[1]}")
     }
 
