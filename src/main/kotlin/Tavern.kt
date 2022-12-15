@@ -1,4 +1,5 @@
 import java.io.File
+import java.lang.Integer.max
 
 private const val TAVERN_MASTER = "Taernyl"
 private const val TAVERN_NAME = "$TAVERN_MASTER's Folly"
@@ -8,6 +9,7 @@ private val lastNames = setOf("Ironfoot", "Fernsworth", "Baggins", "Downstrider"
 
 private val menuData = File("data/tavern-menu-data.txt")
     .readText()
+    .replace("\r", "")
     .split("\n")
 
 private val menuItems = List(menuData.size) { index ->
@@ -15,30 +17,55 @@ private val menuItems = List(menuData.size) { index ->
     name
 }
 
+private val menuItemsWithPrice = List(menuData.size) { index ->
+    val (_, name, price) = menuData[index].split(",")
+    listOf(name, price)
+}
+
+
 fun visitTavern() {
     narrate("$heroName enters $TAVERN_NAME")
 
     print_menu()
 
-    val patrons: MutableSet<String> = mutableSetOf()
-    repeat(10) {
-        patrons += "${firstNames.random()} ${lastNames.random()}"
-    }
+//    val patrons: MutableSet<String> = mutableSetOf()
+//    repeat(10) {
+//        patrons += "${firstNames.random()} ${lastNames.random()}"
+//    }
 
-    narrate("$heroName sees several patrons in the tavern:")
-    narrate(patrons.joinToString())
-    repeat(3) {
-        placeOrder(patrons.random(), menuItems.random())
+//    narrate("$heroName sees several patrons in the tavern:")
+//    narrate(patrons.joinToString())
+//    repeat(3) {
+//        placeOrder(patrons.random(), menuItems.random())
+//    }
+
+}
+
+fun itemLength(stringList: List<String>): Int {
+    return stringList[0].length + stringList[1].length
+}
+
+private fun print_menu() {
+    var longestMenuItemLength: Int = menuItemsWithPrice.maxOfOrNull { itemLength(it) + 1 } ?: 0
+
+    var titleLength: Int = TAVERN_NAME.length + 4
+
+    val maxLineLength: Int = max(longestMenuItemLength, titleLength)
+
+    print_title(maxLineLength - TAVERN_NAME.length)
+    menuItemsWithPrice.forEach {
+//        if (it[0] == "Bite of Lembas Bread") {
+//            println("dots = $maxLineLength - ${itemLength(it)}" )
+//        }
+        println("${it[0]}${".".repeat(maxLineLength - itemLength(it))}${it[1]}")
     }
 
 }
 
-private fun print_menu() {
-    narrate("There are several items for sale:")
-    println(menuItems.joinToString())
-
-//    val longestMenuItemLength = menuItems.maxByOrNull { it.length }
-//    println(longestMenuItemLength)
+fun print_title(starsForTitle: Int) {
+    val firstStars = starsForTitle/2
+    val remainingStars = starsForTitle - firstStars
+    println("${"*".repeat(firstStars)}$TAVERN_NAME${"*".repeat(remainingStars)}")
 }
 
 private fun placeOrder(patronName: String, menuItemName: String) {
