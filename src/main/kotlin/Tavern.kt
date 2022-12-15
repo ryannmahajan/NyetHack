@@ -54,11 +54,7 @@ fun visitTavern() {
     narrate("$heroName sees several patrons in the tavern:")
     narrate(patrons.joinToString())
     repeat(2) {
-        val numberOfItems = (1..3).random()
-        val items: List<String> = List(numberOfItems) {
-            menuItems.random()
-        }
-        placeOrder(patrons.random(), items, patronGold)
+        placeOrder(patrons.random(), menuItems.random(), patronGold)
     }
     displayPatronBalances(patronGold)
 
@@ -90,30 +86,24 @@ fun print_title(starsForTitle: Int) {
 
 private fun placeOrder(
     patronName: String,
-    menuItemNames: List<String>,
+    menuItemName: String,
     patronGold: MutableMap<String, Double>
 ) {
-    var totalPrice = menuItemNames.sumOf {
-        menuItemPrices.getValue(it)
-    }
+    val itemPrice = menuItemPrices.getValue(menuItemName)
 
     narrate("$patronName speaks with $TAVERN_MASTER to place an order")
-    if (totalPrice <= patronGold.getOrDefault(patronName, 0.0)) {
-        var itemPrice = 0.0
-        for (menuItemName in menuItemNames) {
-            itemPrice = menuItemPrices.getValue(menuItemName)
-            val action = when (menuItemTypes[menuItemName]) {
-                "shandy", "elixir" -> "pours"
-                "meal" -> "serves"
-                else -> "hands"
-            }
-            narrate("$TAVERN_MASTER $action $patronName a $menuItemName")
-            narrate("$patronName pays $TAVERN_MASTER $itemPrice gold")
-            patronGold[patronName] = patronGold.getValue(patronName) - itemPrice
-            patronGold[TAVERN_MASTER] = patronGold.getValue(TAVERN_MASTER) + itemPrice
+    if (itemPrice <= patronGold.getOrDefault(patronName, 0.0)) {
+        val action = when (menuItemTypes[menuItemName]) {
+            "shandy", "elixir" -> "pours"
+            "meal" -> "serves"
+            else -> "hands"
         }
+        narrate("$TAVERN_MASTER $action $patronName a $menuItemName")
+        narrate("$patronName pays $TAVERN_MASTER $itemPrice gold")
+        patronGold[patronName] = patronGold.getValue(patronName) - itemPrice
+        patronGold[TAVERN_MASTER] = patronGold.getValue(TAVERN_MASTER) + itemPrice
     } else {
-        narrate("$TAVERN_MASTER says, \"You need more coin for a $menuItemNames\"")
+        narrate("$TAVERN_MASTER says, \"You need more coin for a $menuItemName\"")
     }
 }
 
