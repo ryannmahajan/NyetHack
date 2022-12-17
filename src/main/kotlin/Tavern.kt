@@ -48,7 +48,7 @@ fun visitTavern() {
     narrate("$heroName sees several patrons in the tavern:")
     narrate(patrons.joinToString())
 
-    val itemOfDay = patrons.flatMap { getFavoriteMenuItems(it) }.random()
+    val itemOfDay: String = getItemOfDay(patrons)
     narrate("The item of the day is the $itemOfDay")
 
     repeat(2) {
@@ -67,6 +67,14 @@ fun visitTavern() {
     narrate(patrons.joinToString())
 
 }
+
+private fun getItemOfDay(patrons: MutableSet<String>): String {
+    return patrons.flatMap { getFavoriteMenuItems(it) }.fold(mutableMapOf<String, Int>()) { occurences, newVal ->
+        occurences[newVal] = occurences.getOrDefault(newVal, 0) + 1
+        occurences
+    }.maxBy { it.value }.key
+}
+
 private fun getFavoriteMenuItems(patron: String): List<String> {
     return when (patron) {
         "Alex Ironfoot" -> menuItems.filter { menuItem ->
