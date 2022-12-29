@@ -1,12 +1,13 @@
-var heroName: String = ""
+var player = Player()
 
 fun main() {
-    heroName =  promptHeroName()
-    narrate("$heroName, ${createTitle(heroName)}, heads to the town square")
+    narrate("${player.name}, ${player.title}, heads to the town square")
     visitTavern()
+    player.castFireball()
 }
 
 private fun promptHeroName(): String {
+
     narrate("A hero enters the town of Kronstadt. What is their name?") { message ->
     // Prints the message in yellow
         "\u001b[33;1m$message\u001b[0m"
@@ -18,13 +19,4 @@ private fun promptHeroName(): String {
     return input*/
     println("Madrigal")
     return "Madrigal"
-}
-
-private fun createTitle(name: String): String {
-    return when {
-        name.all { it.isDigit() } -> "The Identifiable"
-        name.none { it.isLetter() } -> "The Witness Protection Member"
-        name.count { it.lowercase() in "aeiou" } > 4 -> "The Master of Vowels"
-        else -> "The Renowned Hero"
-    }
 }

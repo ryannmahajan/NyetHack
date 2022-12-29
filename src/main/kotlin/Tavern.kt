@@ -30,7 +30,7 @@ private val menuItemTypes = menuData.associate { (type, name, _) ->
 }
 
 fun visitTavern() {
-    narrate("$heroName enters $TAVERN_NAME")
+    narrate("${player.name} enters $TAVERN_NAME")
 
     print_menu()
     println()
@@ -41,11 +41,11 @@ fun visitTavern() {
 
     val patronGold = mutableMapOf(
         TAVERN_MASTER to 86.00,
-        heroName to 4.50,
+        player.name to 4.50,
         *patrons.map { it to 6.00 }.toTypedArray()
     )
 
-    narrate("$heroName sees several patrons in the tavern:")
+    narrate("${player.name} sees several patrons in the tavern:")
     narrate(patrons.joinToString())
 
     val itemOfDay: String = getItemOfDay(patrons)
@@ -56,13 +56,15 @@ fun visitTavern() {
     }
     displayPatronBalances(patronGold)
 
-    val departingPatrons: List<String> = patrons
+    patrons
         .filter { patron -> patronGold.getOrDefault(patron, 0.0) < 4.0 }
-    departingPatrons.forEach { patron ->
-        narrate("$heroName sees $patron departing the tavern")
+        .also { departingPatrons ->
+            patrons -= departingPatrons.toSet()
+            patronGold -= departingPatrons.toSet()
+        }.forEach { patron ->
+        narrate("${player.name} sees $patron departing the tavern")
     }
-    patrons -= departingPatrons.toSet()
-    patronGold -= departingPatrons.toSet()
+
     narrate("There are still some patrons in the tavern")
     narrate(patrons.joinToString())
 
@@ -89,9 +91,9 @@ fun itemLength(stringList: List<String>): Int {
 }
 
 private fun print_menu() {
-    var longestMenuItemLength: Int = menuItemsWithPrice.maxOfOrNull { itemLength(it) + 1 } ?: 0
+    val longestMenuItemLength: Int = menuItemsWithPrice.maxOfOrNull { itemLength(it) + 1 } ?: 0
 
-    var titleLength: Int = TAVERN_NAME.length + 4
+    val titleLength: Int = TAVERN_NAME.length + 4
 
     val maxLineLength: Int = max(longestMenuItemLength, titleLength)
 
@@ -132,7 +134,7 @@ private fun placeOrder(
 }
 
 private fun displayPatronBalances(patronGold: Map<String, Double>) {
-    narrate("$heroName intuitively knows how much money each patron has")
+    narrate("${player.name} intuitively knows how much money each patron has")
     patronGold.forEach { (patron, balance) ->
         narrate("$patron has ${"%.2f".format(balance)} gold")
     }
