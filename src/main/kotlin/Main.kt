@@ -2,8 +2,13 @@ var player = Player()
 
 fun main() {
     narrate("${player.name}, ${player.title}, heads to the town square")
-    visitTavern()
+//    visitTavern()
+    var currentRoom = TownSquare()
+    currentRoom.enterRoom()
+
+
     player.castFireball()
+
 }
 
 private fun promptHeroName(): String {
